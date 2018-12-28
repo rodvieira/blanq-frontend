@@ -1,0 +1,30 @@
+{
+  "name": "hello-vue",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack-dev-server --mode development --open --hot",
+    "build": "webpack --mode production --progress"
+  },
+  "keywords": [],
+  "author": "rodvieira <rodrigodenizads@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.2.0",
+    "babel-loader": "^8.0.4",
+    "css-loader": "^2.0.1",
+    "file-loader": "^3.0.1",
+    "html-webpack-plugin": "^3.2.0",
+    "node-sass": "^4.11.0",
+    "sass-loader": "^7.1.0",
+    "vue-loader": "^15.4.2"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "vue": "^2.5.21",
+    "vue-axios": "^2.1.4",
+    "vue-material": "^1.0.0-beta-10.2"
+  }
+}
