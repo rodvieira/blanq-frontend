@@ -8,8 +8,8 @@ import Contato from '../pages/Contato.vue'
 Vue.use(Router)
 
 export default new Router({
-  history:true,
-  mode: 'history',
+  // history:true,
+  // mode: 'history',
   routes: [
       {
         path: '/',

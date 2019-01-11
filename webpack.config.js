@@ -25,6 +25,14 @@ module.exports = {
         loader: 'vue-loader',
       },
       {
+        test: /\.vue$/,
+        exclude: /node_modules/,
+        loader: "eslint-loader",
+        options: {
+          fix: true
+        }
+      },
+      {
         test: /\.js$/,
         exclude: /node_modules/,
         loader: 'babel-loader'
@@ -38,7 +46,7 @@ module.exports = {
         ]
       },
       {
-        test: /\.(png|jpg|gif)$/,
+        test: /\.(png|jpg|gif|svg)$/,
         loader: 'file-loader'        
       },
     ]
