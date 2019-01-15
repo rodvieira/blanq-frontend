@@ -3,46 +3,55 @@
     <div class="md-elevation-24 box-login">
       <h4>Insira o token no campo abaixo!</h4>
       <md-field md-inline>
-        <md-input></md-input>
+        <md-input v-model="teste"></md-input>
+        <md-button @click="testeToken()">TESTE</md-button>
+        <md-button @click="tokenTeste()">token</md-button>
       </md-field>
-    </div>
-    <div>
-      <button>
-        <router-link to="/contato">
-          Contato
-        </router-link>
-      </button>
-      <button>
-        <router-link to="/empresa">
-          Empresa
-        </router-link>
-      </button>
     </div>
   </div>
 </template>
 
 <script>
-import authLogin from "../services/login.js";
+// import authLogin from '../services/login.js'
+import { mapState } from 'vuex'
+
 export default {
   name: "Login",
   data() {
     return {
-      token: "",
-      authToken: []
+      // token: "",
+      // authToken: [],
+      teste: ''
     };
   },
+  computed: mapState([
+    'token'
+  ]),
+    
+  methods: {
+    testeToken() {
+      localStorage.setItem('token', this.teste)
+      // this.$store.dispatch('loadToken')
+    },
+    tokenTeste() {
+      this.$store.dispatch('loadToken')
+    }
+  },
 
-  mounted() {
-    authLogin
-      .listar()
-      .then(result => {
-        this.authToken = result.data;
-        // console.log(this.authToken);
-      })
-      .catch(() => {
-        // console.log(this.authToken + "errou");
-      });
+  mounted(){
+    
   }
+
+  // mounted() {
+  //   authLogin
+  //     .listar()
+  //     .then(result => {
+  //       this.authToken = result.data;
+  //     })
+  //     .catch(() => {
+        
+  //     });
+  // },
 };
 </script>
 

@@ -16,6 +16,9 @@ export default {
 </script>
 <style>
   @import url('https://fonts.googleapis.com/css?family=Roboto');
+  input:focus, button:focus {
+    outline: none;
+  }
   body {
     margin: 0px;
     font-family: 'Roboto', sans-serif !important;

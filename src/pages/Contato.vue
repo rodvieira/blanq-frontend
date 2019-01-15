@@ -3,10 +3,15 @@
     <header class="md-elevation-3">
       <span class="md-display-2">Contato</span>
     </header>
-    <div class="rdv-content">
+    <section class="rdv-content">
       <div class="rdv-buttons">
-        <md-button class="md-dense md-raised md-primary buttons-rdv">Adicionar</md-button>
-        <md-button class="md-dense md-raised md-primary buttons-rdv">Empresas</md-button>
+        <router-link to="/empresa">
+          <md-button class="md-dense md-raised md-primary buttons-rdv">Empresas</md-button>
+        </router-link>
+        <md-button
+          class="md-dense md-raised md-primary buttons-rdv"
+          @click="showDialog = true"
+        >Adicionar</md-button>
       </div>
       <div class="md-layout md-gutter">
         <div class="md-layout-item">
@@ -30,7 +35,37 @@
           </ul>
         </div>
       </div>
-    </div>
+    </section>
+    <section>
+      <md-dialog :md-active.sync="showDialog">
+        <md-dialog-title>Novo contato</md-dialog-title>
+        <div class="modal-conteudo">
+          <div class="form-modal">
+            <label for="nome">Nome</label>
+            <input type="text">
+          </div>
+          <div class="form-modal">
+            <label for="telefone">Telefone</label>
+            <input type="text">
+            <span>+</span>
+          </div>
+          <div class="form-modal">
+            <label for="email">E-mail</label>
+            <input type="text">
+            <span>+</span>
+          </div>
+          <div class="form-modal">
+            <label for="empresas">Empresas relacionadas</label>
+            <input type="text">
+            <span>+</span>
+          </div>
+        </div>
+        <md-dialog-actions>
+          <md-button class="md-primary modal-btn" @click="showDialog = false">Close</md-button>
+          <md-button class="md-primary modal-btn" @click="showDialog = false">Save</md-button>
+        </md-dialog-actions>
+      </md-dialog>
+    </section>
   </div>
 </template>
  
@@ -38,7 +73,15 @@
 export default {
   name: "contato",
   data() {
-    return {};
+    return {
+      showDialog: false,
+      teste: ''
+    };
+  },
+  methods: {
+    testando(){
+      this.teste = this.$store.state.token
+    }
   }
 };
 </script>
@@ -63,6 +106,10 @@ header {
 }
 header span {
   color: $text-color-white;
+}
+a {
+  color:$text-color-white;
+  text-decoration: none;
 }
 .buttons-rdv {
   margin: $marginbt-default;
@@ -102,6 +149,39 @@ header span {
 .md-layout-item li span:nth-of-type(2) {
   float: right;
   cursor: pointer;
+}
+//Modal
+.md-dialog {
+  background-color: $background-color-default;
+  border-radius: $radius-default;
+}
+.modal-conteudo {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 500px;
+}
+.form-modal {
+  width: 100%;
+  color: #666;
+}
+.md-dialog-title {
+  color: #666;
+}
+.form-modal input {
+  width: 90%;
+  padding: 10px;
+  margin: 10px;
+  border-radius: $radius-default;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+}
+.form-modal span {
+  cursor: pointer;
+}
+.modal-btn {
+  background-color: #dcdcdc;
+  color: #666;
 }
 </style>
  
