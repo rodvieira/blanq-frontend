@@ -13,7 +13,7 @@
 
 <script>
 // import authLogin from '../services/login.js'
-import { mapState } from 'vuex'
+// import { mapState } from 'vuex'
 
 export default {
   name: "Login",
@@ -24,10 +24,14 @@ export default {
       teste: ''
     };
   },
-  computed: mapState([
-    'token'
-  ]),
-    
+  // computed: mapState([
+  //   'token',
+  // ]),
+    computed: {
+      isToken() {
+        return this.$store.getters.isToken
+      }
+    },
   methods: {
     testeToken() {
       localStorage.setItem('token', this.teste)
@@ -38,9 +42,6 @@ export default {
     }
   },
 
-  mounted(){
-    
-  }
 
   // mounted() {
   //   authLogin
