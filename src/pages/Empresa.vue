@@ -42,31 +42,31 @@
         <div class="modal-conteudo">
           <div class="form-modal">
             <label for="nome">Nome</label>
-            <input type="text">
+            <input type="text" placeholder="Nome">
           </div>
           <div class="form-modal">
-            <label for="dominios">Dominios</label>
-            <input type="text">
+            <label for="dominio">Domínio</label>
+            <input type="text" placeholder="Domínio">
           </div>
           <div class="form-modal">
             <label for="telefone">Telefone</label>
-            <input type="text">
+            <input type="text" placeholder="Telefone">
             <span>+</span>
           </div>
           <div class="form-modal">
             <label for="email">E-mail</label>
-            <input type="text">
+            <input type="text" placeholder="E-mail">
             <span>+</span>
           </div>
           <div class="form-modal">
-            <label for="empresas">Empresas relacionadas</label>
-            <input type="text">
+            <label for="contatos">Contatos relacionadas</label>
+            <input type="text" placeholder="Contatos relacionadas">
             <span>+</span>
           </div>
         </div>
         <md-dialog-actions>
           <md-button class="md-primary modal-btn" @click="showDialog = false">Close</md-button>
-          <md-button class="md-primary modal-btn" @click="showDialog = false">Save</md-button>
+          <md-button class="md-primary modal-btn" >Save</md-button>
         </md-dialog-actions>
       </md-dialog>
     </section>
@@ -75,7 +75,7 @@
  
 <script>
 export default {
-  name: "contato",
+  name: "empresa",
   data() {
     return {
       showDialog: false
@@ -89,7 +89,7 @@ export default {
 
 $marginbt-default: 10px;
 $padding-default: 10px;
-$radius-default: 10px;
+$radius-default: 6px;
 $text-color-grey: #666;
 $text-color-white: #fff;
 $background-color-default: #fff;
@@ -172,7 +172,9 @@ a {
   padding: 10px;
   margin: 10px;
   border-radius: $radius-default;
-  border: 1px solid rgba(0, 0, 0, 0.3);
+  background-color: #ece8e8;
+  border: none;
+  color: $text-color-grey;
 }
 .form-modal span {
   cursor: pointer;

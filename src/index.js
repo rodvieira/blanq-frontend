@@ -1,16 +1,13 @@
 import Vue from "vue";
 import App from "./App.vue";
 import VueMaterial from "vue-material";
+import VueSweetalert2 from 'vue-sweetalert2';
 import "vue-material/dist/vue-material.min.css";
-import axios from "axios";
-import VueAxios from "vue-axios";
 import router from "./router";
-import store from "./store/store";
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import store from "./store";
 
-Vue.use(VueAxios, axios);
 Vue.use(VueMaterial);
-Vue.use(FontAwesomeIcon);
+Vue.use(VueSweetalert2);
 
 new Vue({
   el: "#app",
