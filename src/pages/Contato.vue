@@ -16,7 +16,7 @@
             <span @click="arrayPush('telefone')">
               <i class="fas fa-plus-circle"></i> 
             </span>
-            <span class="tags-contato" v-for="telefone in addContato.phones" :key="telefone">{{telefone}}</span>
+            <span class="tags-contato" v-for="(telefone, index) in addContato.phones" :key="index">{{telefone}} <span @click="addContato.phones.splice(index, 1)">x</span></span>
           </div>
 
           <div class="form-modal">
@@ -25,25 +25,11 @@
             <span @click="arrayPush('email')">
               <i class="fas fa-plus-circle"></i> 
             </span>
-            <span class="tags-contato" v-for="email in addContato.emails" :key="email">{{email}}</span>
+            <span class="tags-contato" v-for="(email, index) in addContato.emails" :key="index">{{email}} <span @click="addContato.emails.splice(index, 1)">x</span></span>
           </div>
-
-          <!-- <div class="form-modal">
-            <label for="empresas">Empresas relacionadas</label>
-            <input
-              v-model="employers"
-              type="text"
-              placeholder="Ex: Google, Facebook.."
-            >
-            <span @click="arrayPush('empresas')">
-              <i class="fas fa-plus-circle"></i> 
-            </span>
-            <p v-for="empresas in addContato.empresasRelacionadas" :key="empresas">{{empresas}}</p>
-          </div> -->
-          
         </div>
         <md-dialog-actions>
-          <md-button class="md-primary modal-btn" @click="showAddContato = false">Close</md-button>
+          <md-button class="md-primary modal-btn" @click="closeModalAdd()">Close</md-button>
           <md-button class="md-primary modal-btn" @click="postContato()"> Save </md-button>
         </md-dialog-actions>
       </md-dialog>
@@ -53,29 +39,41 @@
     <div>
       <md-dialog :md-active.sync="showDetails">
         <md-dialog-title>Detalhes do Contato</md-dialog-title>
+        <span @click="putDisable = false">EDITAR</span>
         <div class="modal-conteudo">
           <div class="form-modal">
             <label for="nome">Nome</label>
-            <input type="text" :value="getContatoId.name">
+            <input type="text" v-model="getContatoId.name" :disabled="putDisable">
           </div>
 
           <div class="form-modal">
             <label for="telefone">Telefone</label>
-            <input type="text" maxlength="15" v-for="telefone in getContatoId.phones" :key="telefone.id" :value="telefone.number">
+            <input type="text" maxlength="15" v-model="putObjContato.phone" :disabled="putDisable">
+            <span @click="arrayPutPush('phone')">
+              <i class="fas fa-plus-circle"></i> 
+            </span>
+            <span class="tags-contato" v-for="(telefone, index) in getContatoId.phones" :key="telefone.id">
+              {{telefone.number}} 
+              <span v-if="!putDisable" @click="getContatoId.phones.splice(index, 1)">x</span>
+            </span>
           </div>
 
           <div class="form-modal">
             <label for="email">E-mail</label>
-            <input type="text" v-for="email in getContatoId.emails" :key="email.id" :value="email.address">
+            <input type="text" v-model="putObjContato.email" :disabled="putDisable">
+            <span @click="arrayPutPush('email')">
+              <i class="fas fa-plus-circle"></i> 
+            </span>
+            <span class="tags-contato" v-for="(email, index) in getContatoId.emails" :key="email.id" >
+              {{email.address}} 
+              <span v-if="!putDisable" @click="getContatoId.emails.splice(index, 1)">x</span>
+            </span>
           </div>
-
-          <!-- <div class="form-modal">
-            <label for="empresas">Empresas relacionadas</label>
-            <input
-              type="text" value="Google">
-            <p v-for="empresas in getContatoId.empresasRelacionadas" :key="empresas">{{empresas}}</p>
-          </div> -->
         </div>
+        <md-dialog-actions>
+          <md-button class="md-primary modal-btn" @click="showDetails = false">Close</md-button>
+          <md-button class="md-primary modal-btn" @click="putContato(getContatoId.id)"> Save </md-button>
+        </md-dialog-actions>
       </md-dialog>
     </div>
     <!-- / Detalhes contato -->
@@ -119,17 +117,6 @@
 
 
 <script>
-// const email = ['rodrigo@mail.com', 'marcela@mail.com', 'otavio@mail.com'];
-
-// let resultado = email.map((element) => {
-//     return element = {address: element}
-// })
-
-// const teste = [{
-//     emails: JSON.stringify(resultado)
-// }]
-
-// console.log(teste);
 import Header from '../components/Header';
 import { mapState, mapActions } from "vuex";
 
@@ -142,14 +129,18 @@ export default {
     return {
       showDetails: false,
       showAddContato: false,   
-      name: '',
       responsible: null,
       objContato: {
         nome:'',
         email: [],
         phone: [],
+      },
+      putDisable: true,
+      putObjContato: {
+        nome: '',
+        email: [],
+        phone: [],
       }
-      
     };
   },
   
@@ -163,11 +154,20 @@ export default {
   },
   watch: {
     'objContato.phone'(val){
-      let valor = val
-      valor = valor.replace(/\D/g,"");
-      valor = valor.replace(/^(\d{2})(\d)/g,"($1) $2");
-      valor = valor.replace(/(\d)(\d{4})$/,"$1-$2");
-      this.objContato.phone = valor ;
+      // let valor = val
+      // valor = valor.replace(/\D/g,"");
+      // valor = valor.replace(/^(\d{2})(\d)/g,"($1) $2");
+      // valor = valor.replace(/(\d)(\d{4})$/,"$1-$2");
+      let valor = this.maskTelefone(val)
+      this.objContato.phone = valor;
+    },
+    'putObjContato.phone'(val){
+      // let valor = val
+      // valor = valor.replace(/\D/g,"");
+      // valor = valor.replace(/^(\d{2})(\d)/g,"($1) $2");
+      // valor = valor.replace(/(\d)(\d{4})$/,"$1-$2");
+      let valor = this.maskTelefone(val)
+      this.putObjContato.phone = valor;
     },
     delContato() {
       if (this.delContato === 'success') {
@@ -189,15 +189,15 @@ export default {
           type: 'success',
           title: 'Contato adicionado com sucesso',
         });
-        this.getContatos();        
+        this.getContatos();
+        this.resetForm();  
       } else if (this.savContato === 'error') {
         this.$swal.fire({
           type: 'error',
           title: 'Erro ao adicionar o contato',
         });
       }
-    }
-    
+    },
   },
   created() {
     this.getContatos();
@@ -207,9 +207,47 @@ export default {
     ...mapActions("Contato", ["getContatos"]),
     ...mapActions("Contato", ["deleteContato"]),
     ...mapActions("Contato", ["getContatoById"]),
+    ...mapActions("Contato", ["editarContato"]),
+
+    maskTelefone (val) {
+      let valor = val
+      valor = valor.replace(/\D/g,"");
+      valor = valor.replace(/^(\d{2})(\d)/g,"($1) $2");
+      valor = valor.replace(/(\d)(\d{4})$/,"$1-$2");
+      return valor;
+    },
+
+    putContato(id) {
+        let resEmail = this.getContatoId.emails.map((element) => {
+          return element = {address: element}
+        });
+
+        let resPhone = this.getContatoId.phones.map((element) => {
+          return element = {number: element}
+        });
+        
+        let idUser = parseInt(localStorage.getItem('user'));
+        let nome = this.getContatoId.name
+        let email = resEmail;
+        let telefone = resPhone;
+        let idPut = parseInt(idUser);
+        
+        let putObj = {
+          name: "teste",
+          responsible: {
+            id: idUser,
+          },
+          emails: [{address: "teste@mail.com"}, {address: "eeet@mail.com"}],
+          phones: [{number: "98944999"}, {number: "99951544"}],
+        }
+
+        putObj = JSON.stringify(putObj);
+        console.log(putObj);
+        
+        this.editarContato(id, putObj);
+    },
 
     postContato() {
-      console.log(this.checkForm())
       if(this.checkForm() == true) {
         let resEmail = this.addContato.emails.map((element) => {
           return element = {address: element}
@@ -234,13 +272,55 @@ export default {
           phones: telefone,
         }
         this.salvarContato(postObj);
+        console.log(postObj);
+        
         this.showAddContato = false;
+      }
+    },
+    arrayPutPush(type) {
+      if (type == 'telefone') {
+        if (this.putObjContato.phone.length > 12) {
+          this.getContatoId.phones.push(this.putObjContato.phone);
+          this.putObjContato.phone = '';
+        } else {
+          this.$swal.fire({
+            text: 'Telefone inválido!',
+            type: 'error',
+            timer: 1000,
+            showConfirmButton: false,
+          });
+          this.putObjContato.phone = '';
+        }
+      } 
+      else if(type == 'email') {
+        if(this.validEmail(this.putObjContato.email)) {
+          this.getContatoId.emails.push(this.putObjContato.email);
+          this.putObjContato.email = '';
+        } else {
+          this.$swal.fire({
+            text: 'Email inválido!',
+            type: 'error',
+            timer: 1000,
+            showConfirmButton: false,
+          });
+          this.putObjContato.email = '';
+        }
       }
     },
     arrayPush(type) {     
       if (type == 'telefone') {
-        this.addContato.phones.push(this.objContato.phone);
-        this.objContato.phone = '';
+        if (this.objContato.phone.length > 12) {
+          this.addContato.phones.push(this.objContato.phone);
+          this.objContato.phone = '';
+        } else {
+          this.$swal.fire({
+            text: 'Telefone inválido!',
+            type: 'error',
+            timer: 1000,
+            showConfirmButton: false,
+          });
+          this.objContato.phone = '';
+        }
       } 
       else if(type == 'email') {
         if(this.validEmail(this.objContato.email)) {
@@ -252,8 +332,6 @@ export default {
             type: 'error',
             timer: 1000,
             showConfirmButton: false,
-            position: 'top-end',
-            width: 200,
           });
           this.objContato.email = '';
         }
@@ -263,6 +341,12 @@ export default {
     contatoId(id) {      
       this.getContatoById(id);
       this.showDetails = true;
+    },
+
+    resetForm() {
+      this.objContato.nome = '';
+      this.objContato.phone = [];
+      this.objContato.email = [];
     },
 
     checkForm() {
@@ -283,6 +367,11 @@ export default {
       // eslint-disable-next-line
       let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return re.test(email);
+    },
+
+    closeModalAdd() {
+      this.showAddContato = false,
+      this.resetForm();
     },
   },
 };

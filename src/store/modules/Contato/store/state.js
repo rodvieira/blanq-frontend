@@ -9,9 +9,11 @@ export default {
     getContatoId: {
         name: '',
         phones: [],
-        emails: []
+        emails: [],
+        id: 0
     },
     delContato: '',
     savContato: '',
+    putContato: '',
 
 };

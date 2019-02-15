@@ -13,6 +13,8 @@ const salvarContato = ({ commit }, obj) => {
       const success = 'success'
       commit('SALVAR_CONTATO', obj);
       commit('SAV_CONTATO', success);
+      console.log(obj);
+      
     })
     .catch(() => {
       const er = 'error';
@@ -32,7 +34,7 @@ const getContatos = ({ commit }) => {
     .then(r => {
       let user = r.data.results;
       commit("GET_CONTATO", user);
-      console.log(user);
+      // console.log(user);
       
     })
     .catch((err) => {
@@ -41,6 +43,7 @@ const getContatos = ({ commit }) => {
 };
 
 const getContatoById = ({ commit }, contatoId) => {
+
   axios({
     url: `https://api.moskitcrm.com/v1/contacts/${contatoId}`,
     method: "GET",
@@ -59,6 +62,29 @@ const getContatoById = ({ commit }, contatoId) => {
     });
 };
 
+const editarContato = ({ commit }, contatoId, obj) => {
+  axios({
+    url: `https://api.moskitcrm.com/v1/contacts/${contatoId}`,
+    method: "PUT",
+    headers: {
+      apikey: window.localStorage.getItem("token"),
+    },
+    data: obj,
+  })
+    .then(() => {
+      console.log('entrou');  
+      console.log(obj);  
+      let success = 'success'
+      commit('PUT_CONTATO', success)
+     
+    })
+    .catch(() => {
+      let erro = 'error'
+      console.log(obj);
+      commit('PUT_CONTATO', erro);  
+    });
+};
+
 const deleteContato = ({ commit }, contatoId) => {
 
   axios({
@@ -69,12 +95,12 @@ const deleteContato = ({ commit }, contatoId) => {
     }
   })
     .then(() => {
-      let teste = 'success'
-      commit('DEL_CONTATO', teste)
+      let success = 'success'
+      commit('DEL_CONTATO', success)
     })
     .catch(() => {
-      let teste = 'error'
-      commit('DEL_CONTATO', teste)     
+      let erro = 'error'
+      commit('DEL_CONTATO', erro)     
     });
 };
 
@@ -82,5 +108,6 @@ export default {
   salvarContato,
   getContatos,
   getContatoById,
+  editarContato,
   deleteContato,
 };
