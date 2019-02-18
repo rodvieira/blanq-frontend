@@ -38,8 +38,13 @@
     <!-- Detalhes contato -->
     <div>
       <md-dialog :md-active.sync="showDetails">
-        <md-dialog-title>Detalhes do Contato</md-dialog-title>
-        <span @click="putDisable = false">EDITAR</span>
+        <md-dialog-title>
+          Detalhes do Contato
+          <span class="span-edit" @click="putDisable = false">
+            <i class="fas fa-edit"></i>
+          </span>
+        </md-dialog-title>
+        
         <div class="modal-conteudo">
           <div class="form-modal">
             <label for="nome">Nome</label>
@@ -72,7 +77,7 @@
         </div>
         <md-dialog-actions>
           <md-button class="md-primary modal-btn" @click="showDetails = false">Close</md-button>
-          <md-button class="md-primary modal-btn" @click="putContato(getContatoId.id)"> Save </md-button>
+          <md-button class="md-primary modal-btn" @click="editContato()"> Save </md-button>
         </md-dialog-actions>
       </md-dialog>
     </div>
@@ -143,31 +148,28 @@ export default {
       }
     };
   },
-  
+
   computed: {
     ...mapState("Contato", ["addContato"]),
     ...mapState("Contato", ["getContato"]),
     ...mapState("Contato", ["getContatoId"]),
     ...mapState("Contato", ["delContato"]),
     ...mapState("Contato", ["savContato"]),
+    ...mapState("Contato", ["putContato"]),
     
   },
   watch: {
     'objContato.phone'(val){
-      // let valor = val
-      // valor = valor.replace(/\D/g,"");
-      // valor = valor.replace(/^(\d{2})(\d)/g,"($1) $2");
-      // valor = valor.replace(/(\d)(\d{4})$/,"$1-$2");
-      let valor = this.maskTelefone(val)
-      this.objContato.phone = valor;
+      if(this.objContato.phone.length > 0) {
+        let valor = this.maskTelefone(val)
+        this.objContato.phone = valor;
+      }
     },
     'putObjContato.phone'(val){
-      // let valor = val
-      // valor = valor.replace(/\D/g,"");
-      // valor = valor.replace(/^(\d{2})(\d)/g,"($1) $2");
-      // valor = valor.replace(/(\d)(\d{4})$/,"$1-$2");
-      let valor = this.maskTelefone(val)
-      this.putObjContato.phone = valor;
+      if(this.putObjContato.phone.length > 0) {
+        let valor = this.maskTelefone(val)
+        this.putObjContato.phone = valor;
+      }
     },
     delContato() {
       if (this.delContato === 'success') {
@@ -198,6 +200,22 @@ export default {
         });
       }
     },
+
+    putContato() {
+      if (this.putContato === 'success') {
+        this.$swal.fire({
+          type: 'success',
+          title: 'Contato alterado com sucesso',
+        });
+        this.getContatos();
+        this.resetForm();  
+      } else if (this.putContato === 'error') {
+        this.$swal.fire({
+          type: 'error',
+          title: 'Erro ao alterar o contato',
+        });
+      }
+    },
   },
   created() {
     this.getContatos();
@@ -217,34 +235,24 @@ export default {
       return valor;
     },
 
-    putContato(id) {
-        let resEmail = this.getContatoId.emails.map((element) => {
-          return element = {address: element}
-        });
-
-        let resPhone = this.getContatoId.phones.map((element) => {
-          return element = {number: element}
-        });
-        
-        let idUser = parseInt(localStorage.getItem('user'));
-        let nome = this.getContatoId.name
-        let email = resEmail;
-        let telefone = resPhone;
-        let idPut = parseInt(idUser);
-        
-        let putObj = {
-          name: "teste",
-          responsible: {
-            id: idUser,
-          },
-          emails: [{address: "teste@mail.com"}, {address: "eeet@mail.com"}],
-          phones: [{number: "98944999"}, {number: "99951544"}],
-        }
-
-        putObj = JSON.stringify(putObj);
-        console.log(putObj);
-        
-        this.editarContato(id, putObj);
+    editContato() {       
+      let idUser = parseInt(localStorage.getItem('user'));
+      let nome = this.getContatoId.name
+      let email = this.getContatoId.emails;
+      let telefone = this.getContatoId.phones;
+      let putId = this.getContatoId.id;
+      
+      let putObj = {
+        id: putId,
+        name: nome,
+        responsible: {
+          id: idUser,
+        },
+        emails: email,
+        phones: telefone,
+      }
+      this.editarContato(putObj);
+      this.showDetails = false;
     },
 
     postContato() {
@@ -271,20 +279,19 @@ export default {
           emails: email,
           phones: telefone,
         }
-        this.salvarContato(postObj);
-        console.log(postObj);
-        
+        this.salvarContato(postObj);        
         this.showAddContato = false;
       }
     },
     arrayPutPush(type) {
-      if (type == 'telefone') {
+      if (type == 'phone') {
         if (this.putObjContato.phone.length > 12) {
-          this.getContatoId.phones.push(this.putObjContato.phone);
+          let addPhone = this.putObjContato.phone;
+          this.getContatoId.phones.push({number: addPhone});
           this.putObjContato.phone = '';
         } else {
           this.$swal.fire({
-            text: 'Telefone inválido!',
+            title: 'Telefone inválido!',
             type: 'error',
             timer: 1000,
             showConfirmButton: false,
@@ -294,11 +301,12 @@ export default {
       } 
       else if(type == 'email') {
         if(this.validEmail(this.putObjContato.email)) {
-          this.getContatoId.emails.push(this.putObjContato.email);
-          this.putObjContato.email = '';
+          let addEmail = this.putObjContato.email;
+          this.getContatoId.emails.push({address: addEmail});
+          this.putObjContato.email = '';          
         } else {
           this.$swal.fire({
-            text: 'Email inválido!',
+            title: 'Email inválido!',
             type: 'error',
             timer: 1000,
             showConfirmButton: false,
@@ -314,7 +322,7 @@ export default {
           this.objContato.phone = '';
         } else {
           this.$swal.fire({
-            text: 'Telefone inválido!',
+            title: 'Telefone inválido!',
             type: 'error',
             timer: 1000,
             showConfirmButton: false,
@@ -328,7 +336,7 @@ export default {
           this.objContato.email = '';
         } else {
           this.$swal.fire({
-            text: 'Email inválido!',
+            title: 'Email inválido!',
             type: 'error',
             timer: 1000,
             showConfirmButton: false,
@@ -374,6 +382,7 @@ export default {
       this.resetForm();
     },
   },
+  
 };
 </script>
 <style lang="scss" scoped>
@@ -473,6 +482,10 @@ a {
 .modal-btn {
   background-color: #dcdcdc;
   color: #666;
+}
+.span-edit {
+  cursor: pointer;
+  float: right;
 }
 // style placeholder
 ::-webkit-input-placeholder { /* Edge */

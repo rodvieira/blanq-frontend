@@ -7,8 +7,13 @@
 <script>
 export default {
   name: 'Header',
-  props: ['title'],
-};
+  props: {
+    title: {
+      type: String,
+      required: true,
+    }
+  }
+}
 </script>
  
 <style lang="scss" scoped>
