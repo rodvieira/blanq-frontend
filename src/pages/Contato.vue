@@ -53,7 +53,7 @@
 
           <div class="form-modal">
             <label for="telefone">Telefone</label>
-            <input type="text" maxlength="15" v-model="putObjContato.phone" :disabled="putDisable">
+            <input type="text" maxlength="15" @keyup.enter="arrayPutPush('phone')" v-model="putObjContato.phone" :disabled="putDisable">
             <span @click="arrayPutPush('phone')">
               <i class="fas fa-plus-circle"></i> 
             </span>
