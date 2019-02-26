@@ -5,12 +5,14 @@ export default {
         name: '',
         phones: [],
         emails: [],
+        employers: [],
     },
     getContatoId: {
         name: '',
         phones: [],
         emails: [],
-        id: 0
+        id: 0,
+        employers: [],
     },
     delContato: '',
     savContato: '',

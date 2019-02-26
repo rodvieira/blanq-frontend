@@ -31,6 +31,19 @@
             </span>
             <span class="tags-empresa" v-for="(email, index) in addEmpresa.emails" :key="index">{{email}} <span @click="addEmpresa.emails.splice(index, 1)">x</span></span>
           </div>
+
+          <div class="form-modal">
+            <label for="Contato"> Contatos Relacionados</label>
+            <select v-model="objEmpresa.contact" @click="arrayContato()">
+              <option v-for="contato in getContato" :value="contato" :key="contato.id">
+                {{contato.name}}
+              </option>
+            </select>
+            <span class="tags-empresa" v-for="(contato, index) in addEmpresa.contact" :key="index">
+              {{contato.name}} 
+              <span @click="addEmpresa.contact.splice(index, 1)">x</span>
+            </span>
+          </div>
         </div>
         <md-dialog-actions>
           <md-button class="md-primary modal-btn" @click="closeModalAdd()">Close</md-button>
@@ -39,8 +52,8 @@
       </md-dialog>
     </section>
     <!-- / Add empresa -->
-    <!-- Detalhes contato -->
-    <!-- <div>
+    <!-- Detalhes empresa -->
+    <div>
       <md-dialog :md-active.sync="showDetails">
         <md-dialog-title>
           Detalhes do Contato
@@ -52,40 +65,53 @@
         <div class="modal-conteudo">
           <div class="form-modal">
             <label for="nome">Nome</label>
-            <input type="text" v-model="getContatoId.name" :disabled="putDisable">
+            <input type="text" v-model="getEmpresaId.name" :disabled="putDisable">
           </div>
 
           <div class="form-modal">
             <label for="telefone">Telefone</label>
-            <input type="text" maxlength="15" @keyup.enter="arrayPutPush('phone')" v-model="putObjContato.phone" :disabled="putDisable">
+            <input type="text" maxlength="15" @keyup.enter="arrayPutPush('phone')" v-model="putObjEmpresa.phone" :disabled="putDisable">
             <span @click="arrayPutPush('phone')">
               <i class="fas fa-plus-circle"></i> 
             </span>
-            <span class="tags-contato" v-for="(telefone, index) in getContatoId.phones" :key="telefone.id">
+            <span class="tags-empresa" v-for="(telefone, index) in getEmpresaId.phones" :key="telefone.id">
               {{telefone.number}} 
-              <span v-if="!putDisable" @click="getContatoId.phones.splice(index, 1)">x</span>
+              <span v-if="!putDisable" @click="getEmpresaId.phones.splice(index, 1)">x</span>
             </span>
           </div>
 
           <div class="form-modal">
             <label for="email">E-mail</label>
-            <input type="text" v-model="putObjContato.email" :disabled="putDisable">
+            <input type="text" v-model="putObjEmpresa.email" :disabled="putDisable">
             <span @click="arrayPutPush('email')">
               <i class="fas fa-plus-circle"></i> 
             </span>
-            <span class="tags-contato" v-for="(email, index) in getContatoId.emails" :key="email.id" >
+            <span class="tags-empresa" v-for="(email, index) in getEmpresaId.emails" :key="email.id" >
               {{email.address}} 
-              <span v-if="!putDisable" @click="getContatoId.emails.splice(index, 1)">x</span>
+              <span v-if="!putDisable" @click="getEmpresaId.emails.splice(index, 1)">x</span>
+            </span>
+          </div>
+
+          <div class="form-modal">
+            <label for="Empresa">Contatos Relacionados</label>
+            <select v-model="putObjEmpresa.contact" @click="arrayPutContato()" :disabled="putDisable">
+              <option v-for="contato in getContato" :value="contato" :key="contato.id">
+                {{contato.name}}
+              </option>
+            </select>
+            <span class="tags-empresa" v-for="(contato, index) in getEmpresaId.contact" :key="index">
+              {{contato.contact.name}} 
+              <span v-if="!putDisable" @click="getEmpresaId.contact.splice(index, 1)">x</span>
             </span>
           </div>
         </div>
         <md-dialog-actions>
           <md-button class="md-primary modal-btn" @click="showDetails = false">Close</md-button>
-          <md-button class="md-primary modal-btn" @click="editContato()"> Save </md-button>
+          <md-button class="md-primary modal-btn" @click="editEmpresa()"> Save </md-button>
         </md-dialog-actions>
       </md-dialog>
-    </div> -->
-    <!-- / Detalhes contato -->
+    </div>
+    <!-- / Detalhes empresa -->
 
     <Header title="Empresas" />
 
@@ -144,49 +170,52 @@ export default {
         dominio: '',
         email: [],
         phone: [],
-        contatosRelacionados:[],
+        contact:[],
       },
       putDisable: true,
-      putObjContato: {
+      putObjEmpresa: {
         nome: '',
         email: [],
         phone: [],
-      }
+        contact:[],
+      },
     };
   },
 
   computed: {
     ...mapState("Empresa", ["addEmpresa"]),
     ...mapState("Empresa", ["getEmpresa"]),
-    // ...mapState("Empresa", ["getEmpresaId"]),
+    ...mapState("Empresa", ["getEmpresaId"]),
     ...mapState("Empresa", ["delEmpresa"]),
     ...mapState("Empresa", ["savEmpresa"]),
-    // ...mapState("Empresa", ["putEmpresa"]),
+    ...mapState("Empresa", ["putEmpresa"]),
+    ...mapState("Contato", ["getContato"]),
   },
   watch: {
-  //   'objContato.phone'(val){
-  //     if(this.objContato.phone.length > 0) {
-  //       let valor = this.maskTelefone(val)
-  //       this.objContato.phone = valor;
-  //     }
-  //   },
-  //   'putObjContato.phone'(val){
-  //     if(this.putObjContato.phone.length > 0) {
-  //       let valor = this.maskTelefone(val)
-  //       this.putObjContato.phone = valor;
-  //     }
-  //   },
+    'objEmpresa.phone'(val){
+      if(this.objEmpresa.phone.length > 0) {
+        let valor = this.maskTelefone(val)
+        this.objEmpresa.phone = valor;
+      }
+    },
+    'putObjEmpresa.phone'(val){
+      if(this.putObjEmpresa.phone.length > 0) {
+        let valor = this.maskTelefone(val)
+        this.putObjEmpresa.phone = valor;
+      }
+    },
     delEmpresa() {
       if (this.delEmpresa === 'success') {
         this.$swal.fire({
           type: 'success',
-          title: 'Empresa excluido com sucesso',
+          title: 'Empresa excluida com sucesso',
         });
-        this.getEmpresas();        
+        this.getEmpresas();
+        this.resetMsg();
       } else if (this.delEmpresa === 'error') {
         this.$swal.fire({
           type: 'error',
-          title: 'Erro ao excluir o Empresa',
+          title: 'Erro ao excluir a Empresa',
         });
       }
     },
@@ -194,71 +223,80 @@ export default {
       if (this.savEmpresa === 'success') {
         this.$swal.fire({
           type: 'success',
-          title: 'Empresa adicionado com sucesso',
+          title: 'Empresa adicionada com sucesso',
         });
         this.getEmpresas();
-        this.resetForm();  
+        this.resetForm();
+        this.resetMsg();
+        let test = ''
+        this.$store.dispatch('savEmpresa/SAV_EMPRESA', test);
       } else if (this.savEmpresa === 'error') {
         this.$swal.fire({
           type: 'error',
-          title: 'Erro ao adicionar o Empresa',
+          title: 'Erro ao adicionar a Empresa',
         });
       }
     },
 
-  //   putContato() {
-  //     if (this.putContato === 'success') {
-  //       this.$swal.fire({
-  //         type: 'success',
-  //         title: 'Contato alterado com sucesso',
-  //       });
-  //       this.getContatos();
-  //       this.resetForm();  
-  //     } else if (this.putContato === 'error') {
-  //       this.$swal.fire({
-  //         type: 'error',
-  //         title: 'Erro ao alterar o contato',
-  //       });
-  //     }
-  //   },
+    putEmpresa() {
+      if (this.putEmpresa === 'success') {
+        this.$swal.fire({
+          type: 'success',
+          title: 'Empresa alterada com sucesso',
+        });
+        this.getEmpresas();
+        this.resetForm();
+        this.resetMsg();
+      } else if (this.putEmpresa === 'error') {
+        this.$swal.fire({
+          type: 'error',
+          title: 'Erro ao alterar a empresa',
+        });
+      }
+    },
   },
   created() {
     this.getEmpresas();
+    this.getContatos();
   },
   methods: {
     ...mapActions("Empresa", ["salvarEmpresa"]),
     ...mapActions("Empresa", ["getEmpresas"]),
     ...mapActions("Empresa", ["deleteEmpresa"]),
-    // ...mapActions("Empresa", ["getEmpresaById"]),
-    // ...mapActions("Empresa", ["editarEmpresa"]),
+    ...mapActions("Empresa", ["getEmpresaById"]),
+    ...mapActions("Empresa", ["editarEmpresa"]),
+    ...mapActions("Empresa", ["resetMsg"]),
+    ...mapActions("Contato", ["getContatos"]),
 
-  //   maskTelefone (val) {
-  //     let valor = val
-  //     valor = valor.replace(/\D/g,"");
-  //     valor = valor.replace(/^(\d{2})(\d)/g,"($1) $2");
-  //     valor = valor.replace(/(\d)(\d{4})$/,"$1-$2");
-  //     return valor;
-  //   },
+    maskTelefone (val) {
+      let valor = val
+      valor = valor.replace(/\D/g,"");
+      valor = valor.replace(/^(\d{2})(\d)/g,"($1) $2");
+      valor = valor.replace(/(\d)(\d{4})$/,"$1-$2");
+      return valor;
+    },
 
-  //   editContato() {       
-  //     let idUser = parseInt(localStorage.getItem('user'));
-  //     let nome = this.getContatoId.name
-  //     let email = this.getContatoId.emails;
-  //     let telefone = this.getContatoId.phones;
-  //     let putId = this.getContatoId.id;
+    editEmpresa() {       
+      let idUser = parseInt(localStorage.getItem('user'));
+      let nome = this.getEmpresaId.name
+      let email = this.getEmpresaId.emails;
+      let telefone = this.getEmpresaId.phones;
+      let contatos = this.getEmpresaById.contact;
+      let putId = this.getEmpresaId.id;
       
-  //     let putObj = {
-  //       id: putId,
-  //       name: nome,
-  //       responsible: {
-  //         id: idUser,
-  //       },
-  //       emails: email,
-  //       phones: telefone,
-  //     }
-  //     this.editarContato(putObj);
-  //     this.showDetails = false;
-  //   },
+      let putObj = {
+        id: putId,
+        name: nome,
+        responsible: {
+          id: idUser,
+        },
+        emails: email,
+        phones: telefone,
+        contact: contatos,
+      }
+      this.editarEmpresa(putObj);
+      this.showDetails = false;
+    },
 
     postEmpresa() {
       if(this.checkForm() == true) {
@@ -270,12 +308,17 @@ export default {
           return element = {number: element}
         });
 
+        let resContato = this.addEmpresa.contact.map((element) => {
+          return element = { contact:{id:element.id}}
+        });
+
         const idUser = window.localStorage.getItem('user');
         let nome = this.objEmpresa.nome;
         let dominio = this.objEmpresa.dominio
         let email = resEmail;
         let telefone = resPhone;
-        let id = parseInt(idUser)
+        let contatos = resContato;
+        let id = parseInt(idUser);
         
         const postObj = {
           name: nome,
@@ -285,43 +328,69 @@ export default {
           },
           emails: email,
           phones: telefone,
+          employees: contatos,
         }
         this.salvarEmpresa(postObj);        
         this.showAddEmpresa = false;
+        this.resetForm();
       }
     },
-  //   arrayPutPush(type) {
-  //     if (type == 'phone') {
-  //       if (this.putObjContato.phone.length > 12) {
-  //         let addPhone = this.putObjContato.phone;
-  //         this.getContatoId.phones.push({number: addPhone});
-  //         this.putObjContato.phone = '';
-  //       } else {
-  //         this.$swal.fire({
-  //           title: 'Telefone inválido!',
-  //           type: 'error',
-  //           timer: 1000,
-  //           showConfirmButton: false,
-  //         });
-  //         this.putObjContato.phone = '';
-  //       }
-  //     } 
-  //     else if(type == 'email') {
-  //       if(this.validEmail(this.putObjContato.email)) {
-  //         let addEmail = this.putObjContato.email;
-  //         this.getContatoId.emails.push({address: addEmail});
-  //         this.putObjContato.email = '';          
-  //       } else {
-  //         this.$swal.fire({
-  //           title: 'Email inválido!',
-  //           type: 'error',
-  //           timer: 1000,
-  //           showConfirmButton: false,
-  //         });
-  //         this.putObjContato.email = '';
-  //       }
-  //     }
-  //   },
+    arrayPutPush(type) {
+      if (type == 'phone') {
+        if (this.putObjEmpresa.phone.length > 12) {
+          let addPhone = this.putObjEmpresa.phone;
+          this.getEmpresaId.phones.push({number: addPhone});
+          this.putObjEmpresa.phone = '';
+        } else {
+          this.$swal.fire({
+            title: 'Telefone inválido!',
+            type: 'error',
+            timer: 1000,
+            showConfirmButton: false,
+          });
+          this.putObjEmpresa.phone = '';
+        }
+      } 
+      else if(type == 'email') {
+        if(this.validEmail(this.putObjEmpresa.email)) {
+          let addEmail = this.putObjEmpresa.email;
+          this.getEmpresaId.emails.push({address: addEmail});
+          this.putObjEmpresa.email = '';          
+        } else {
+          this.$swal.fire({
+            title: 'Email inválido!',
+            type: 'error',
+            timer: 1000,
+            showConfirmButton: false,
+          });
+          this.putObjEmpresa.email = '';
+        }
+      }
+    },
+    arrayPutContato() {
+      if (this.putObjEmpresa.contact.length == 0) {
+        this.$swal.fire({
+          title: 'Contato inválido!',
+          type: 'error',
+          timer: 1000,
+          showConfirmButton: false,
+        });
+      } else {
+        this.getEmpresaId.contact.push(this.putObjEmpresa);
+      }
+    },
+    arrayContato(){
+      if (this.objEmpresa.contact.length == 0) {
+        this.$swal.fire({
+          title: 'Contato inválido!',
+          type: 'error',
+          timer: 1000,
+          showConfirmButton: false,
+        });
+      } else {
+        this.addEmpresa.contact.push(this.objEmpresa.contact);
+      }
+    },
     arrayPush(type) {     
       if (type == 'telefone') {
         if (this.objEmpresa.phone.length > 12) {
@@ -353,15 +422,17 @@ export default {
       }
     },
 
-  //   contatoId(id) {      
-  //     this.getContatoById(id);
-  //     this.showDetails = true;
-  //   },
-
+    empresaId(id) {      
+      this.getEmpresaById(id);
+      this.showDetails = true;
+    },
     resetForm() {
       this.objEmpresa.nome = '';
+      this.objEmpresa.dominio = '';
       this.objEmpresa.phone = [];
       this.objEmpresa.email = [];
+      this.addEmpresa.phones = [];
+      this.addEmpresa.emails = [];
     },
 
     checkForm() {
@@ -465,7 +536,7 @@ a {
 .md-dialog-title {
   color: #666;
 }
-.form-modal input {
+.form-modal input, .form-modal select {
   width: 90%;
   padding: 10px;
   margin: 10px;

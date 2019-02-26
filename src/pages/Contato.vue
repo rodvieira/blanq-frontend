@@ -27,6 +27,18 @@
             </span>
             <span class="tags-contato" v-for="(email, index) in addContato.emails" :key="index">{{email}} <span @click="addContato.emails.splice(index, 1)">x</span></span>
           </div>
+          <div class="form-modal">
+            <label for="Empresa"> Contatos Relacionados</label>
+            <select v-model="objContato.employers" @click="arrayEmpresa()">
+              <option v-for="empresa in getEmpresa" :value="empresa" :key="empresa.id">
+                {{empresa.name}}
+              </option>
+            </select>
+            <span class="tags-empresa" v-for="(empresa, index) in addContato.employers" :key="index">
+              {{empresa.name}} 
+              <span @click="addContato.employers.splice(index, 1)">x</span>
+            </span>
+          </div>
         </div>
         <md-dialog-actions>
           <md-button class="md-primary modal-btn" @click="closeModalAdd()">Close</md-button>
@@ -72,6 +84,19 @@
             <span class="tags-contato" v-for="(email, index) in getContatoId.emails" :key="email.id" >
               {{email.address}} 
               <span v-if="!putDisable" @click="getContatoId.emails.splice(index, 1)">x</span>
+            </span>
+          </div>
+
+          <div class="form-modal">
+            <label for="Empresa"> Contatos Relacionados</label>
+            <select v-model="putObjContato.employers" @click="arrayPutEmpresa()" :disabled="putDisable">
+              <option v-for="empresa in getEmpresa" :value="empresa" :key="empresa.id">
+                {{empresa.name}}
+              </option>
+            </select>
+            <span class="tags-contato" v-for="(empresa, index) in getContatoId.employers" :key="index">
+              {{empresa.company.name}} 
+              <span  v-if="!putDisable" @click="getContatoId.employers.splice(index, 1)">x</span>
             </span>
           </div>
         </div>
@@ -139,12 +164,14 @@ export default {
         nome:'',
         email: [],
         phone: [],
+        employers: []
       },
       putDisable: true,
       putObjContato: {
         nome: '',
         email: [],
         phone: [],
+        employers: [],
       }
     };
   },
@@ -156,7 +183,7 @@ export default {
     ...mapState("Contato", ["delContato"]),
     ...mapState("Contato", ["savContato"]),
     ...mapState("Contato", ["putContato"]),
-    
+    ...mapState("Empresa", ["getEmpresa"]),
   },
   watch: {
     'objContato.phone'(val){
@@ -219,6 +246,7 @@ export default {
   },
   created() {
     this.getContatos();
+    this.getEmpresas();
   },
   methods: {
     ...mapActions("Contato", ["salvarContato"]),
@@ -226,6 +254,7 @@ export default {
     ...mapActions("Contato", ["deleteContato"]),
     ...mapActions("Contato", ["getContatoById"]),
     ...mapActions("Contato", ["editarContato"]),
+    ...mapActions("Empresa", ["getEmpresas"]),
 
     maskTelefone (val) {
       let valor = val
@@ -240,6 +269,7 @@ export default {
       let nome = this.getContatoId.name
       let email = this.getContatoId.emails;
       let telefone = this.getContatoId.phones;
+      let empresas = this.getContatoId.employers;
       let putId = this.getContatoId.id;
       
       let putObj = {
@@ -250,6 +280,7 @@ export default {
         },
         emails: email,
         phones: telefone,
+        employers: empresas,
       }
       this.editarContato(putObj);
       this.showDetails = false;
@@ -265,11 +296,16 @@ export default {
           return element = {number: element}
         });
 
+        let resEmpresa = this.addContato.employers.map((element) => {
+          return element = { company:{id:element.id}}
+        });
+
         const idUser = window.localStorage.getItem('user');
         let nome = this.objContato.nome;
         let email = resEmail;
         let telefone = resPhone;
-        let id = parseInt(idUser)
+        let id = parseInt(idUser);
+        let empresas = resEmpresa;
         
         const postObj = {
           name: nome,
@@ -278,6 +314,7 @@ export default {
           },
           emails: email,
           phones: telefone,
+          employers: empresas
         }
         this.salvarContato(postObj);        
         this.showAddContato = false;
@@ -315,6 +352,33 @@ export default {
         }
       }
     },
+
+    arrayPutEmpresa() {
+      if (this.putObjContato.employers.length == 0) {
+        this.$swal.fire({
+          title: 'Empresa inválida!',
+          type: 'error',
+          timer: 1000,
+          showConfirmButton: false,
+        });
+      } else {
+        this.getContatoId.employers.push(this.putObjEmpresa);
+      }
+    },
+
+    arrayEmpresa(){
+      if (this.objContato.employers.length == 0) {
+        this.$swal.fire({
+          title: 'Empresa inválida',
+          type: 'error',
+          timer: 1000,
+          showConfirmButton: false,
+        });
+      } else {
+        this.addContato.employers.push(this.objContato.employers);
+      }
+    },
+
     arrayPush(type) {     
       if (type == 'telefone') {
         if (this.objContato.phone.length > 12) {
@@ -458,7 +522,7 @@ a {
 .md-dialog-title {
   color: #666;
 }
-.form-modal input {
+.form-modal input, .form-modal select {
   width: 90%;
   padding: 10px;
   margin: 10px;

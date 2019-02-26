@@ -12,7 +12,7 @@ const salvarEmpresa = ({ commit }, obj) => {
     .then(() => {
       const success = 'success'
       commit('SALVAR_EMPRESA', obj);
-      commit('SAV_EMPRESA', success);      
+      commit('SAV_EMPRESA', success);  
     })
     .catch(() => {
       const er = 'error';
@@ -30,9 +30,7 @@ const getEmpresas = ({ commit }) => {
     }
   })
     .then(r => {
-      let user = r.data.results;
-      console.log(user);
-      
+      let user = r.data.results;      
       commit("GET_EMPRESA", user);
     })
     .catch(() => {
@@ -40,44 +38,46 @@ const getEmpresas = ({ commit }) => {
     });
 };
 
-// const getContatoById = ({ commit }, contatoId) => {
+const getEmpresaById = ({ commit }, empresaId) => {
 
-//   axios({
-//     url: `https://api.moskitcrm.com/v1/companies/${contatoId}`,
-//     method: "GET",
-//     headers: {
-//       apikey: window.localStorage.getItem("token")
-//     }
-//   })
-//     .then(r => {
-//       let user = r.data;      
-//       commit('GET_CONTATO_ID', user);
+  axios({
+    url: `https://api.moskitcrm.com/v1/companies/${empresaId}`,
+    method: "GET",
+    headers: {
+      apikey: window.localStorage.getItem("token")
+    }
+  })
+    .then(r => {
+      let user = r.data;      
+      console.log(user);
       
-//     })
-//     .catch(() => {
-//       commit('GET_CONTATO_ID', {});   
-//     });
-// };
+      commit('GET_EMPRESA_ID', user);
+      
+    })
+    .catch(() => {
+      commit('GET_EMPRESA_ID', {});   
+    });
+};
 
-// const editarContato = ({ commit }, obj) => {
-//   const objId = obj
-//   axios({
-//     url: `https://api.moskitcrm.com/v1/companies/${objId.id}`,
-//     method: "PUT",
-//     headers: {
-//       apikey: window.localStorage.getItem("token"),
-//     },
-//     data: obj,
-//   })
-//     .then(() => {
-//       let success = 'success'
-//       commit('PUT_CONTATO', success)
-//     })
-//     .catch(() => {
-//       let erro = 'error'
-//       commit('PUT_CONTATO', erro);  
-//     });
-// };
+const editarEmpresa = ({ commit }, obj) => {
+  const objId = obj
+  axios({
+    url: `https://api.moskitcrm.com/v1/companies/${objId.id}`,
+    method: "PUT",
+    headers: {
+      apikey: window.localStorage.getItem("token"),
+    },
+    data: obj,
+  })
+    .then(() => {
+      let success = 'success'
+      commit('PUT_EMPRESA', success)
+    })
+    .catch(() => {
+      let erro = 'error'
+      commit('PUT_EMPRESA', erro);  
+    });
+};
 
 const deleteEmpresa = ({ commit }, empresaId) => {
 
@@ -98,10 +98,17 @@ const deleteEmpresa = ({ commit }, empresaId) => {
     });
 };
 
+const resetMsg = ({ commit }) => {
+  commit('DEL_EMPRESA', null);
+  commit('SAV_EMPRESA', null);
+  commit('PUT_EMPRESA', null);
+};
+
 export default {
   salvarEmpresa,
   getEmpresas,
-  // getContatoById,
-  // editarContato,
+  getEmpresaById,
+  editarEmpresa,
   deleteEmpresa,
+  resetMsg,
 };

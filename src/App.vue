@@ -16,7 +16,7 @@ export default {
 </script>
 <style>
   @import url('https://fonts.googleapis.com/css?family=Roboto:200,400');
-  input:focus, button:focus {
+  input:focus, button:focus, select:focus {
     outline: none;
   }
   body {

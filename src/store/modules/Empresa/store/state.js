@@ -6,16 +6,16 @@ export default {
         dominio: '',
         phones: [],
         emails: [],
-        contatosRelacionados: [],
+        contact: [],
     },
-    // getContatoId: {
-    //     name: '',
-    //     phones: [],
-    //     emails: [],
-    //     id: 0
-    // },
+    getEmpresaId: {
+        name: '',
+        phones: [],
+        emails: [],
+        id: 0,
+        contact: [],
+    },
     delEmpresa: '',
     savEmpresa: '',
-    // putContato: '',
-
+    putEmpresa: '',
 };

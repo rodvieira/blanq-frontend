@@ -2,7 +2,7 @@ const SALVAR_CONTATO = (state, obj) => {
   state.addContato.name = obj.name;
   state.addContato.phones = obj.phones;
   state.addContato.emails = obj.emails;
-  // state.addContato.nome = obj.nome;
+  state.addContato.employers = obj.employers;
 
 }
 const GET_CONTATO = (state, obj) => {
@@ -14,6 +14,7 @@ const GET_CONTATO_ID = (state, obj) => {
   state.getContatoId.phones = obj.phones;
   state.getContatoId.emails = obj.emails;
   state.getContatoId.id = obj.id;
+  state.getContatoId.employers = obj.employers;
 }
 
 const DEL_CONTATO = (state, obj) => {
