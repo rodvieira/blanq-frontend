@@ -304,6 +304,7 @@ export default {
       }
       this.editarContato(putObj);
       this.showDetails = false;
+      this.putDisable = false;
     },
 
     postContato() {

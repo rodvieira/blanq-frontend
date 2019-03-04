@@ -315,10 +315,9 @@ export default {
         phones: telefone,
         employees: contatos,
       }
-      
-      
       this.editarEmpresa(putObj);
       this.showDetails = false;
+      this.putDisable = false;
     },
 
     postEmpresa() {
@@ -481,6 +480,7 @@ export default {
     closeModalAdd() {
       this.showAddEmpresa = false,
       this.resetForm();
+      this.putDisable = false;
     },
   },
   
