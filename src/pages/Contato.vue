@@ -37,9 +37,9 @@
                 {{empresa.name}}
               </option>
             </select>
-            <span class="tags-empresa" v-for="(empresa, index) in addContato.employers" :key="index">
+            <span class="tags-contato" v-for="(empresa, index) in addContato.company" :key="index">
               {{empresa.name}} 
-              <span @click="addContato.employers.splice(index, 1)">x</span>
+              <span @click="addContato.company.splice(index, 1)">x</span>
             </span>
           </div>
         </div>
@@ -316,7 +316,7 @@ export default {
           return element = {number: element}
         });
 
-        let resEmpresa = this.addContato.employers.map((element) => {
+        let resEmpresa = this.addContato.company.map((element) => {
           return element = { company:{id:element.id}}
         });
 
@@ -395,7 +395,7 @@ export default {
           showConfirmButton: false,
         });
       } else {
-        this.addContato.employers.push(this.objContato.employers);
+        this.addContato.company.push(this.objContato.employers);
       }
     },
 
@@ -433,6 +433,7 @@ export default {
     contatoId(id) {      
       this.getContatoById(id);
       this.showDetails = true;
+      this.putDisable = false;
     },
 
     resetForm() {
