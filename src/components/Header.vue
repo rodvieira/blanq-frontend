@@ -1,6 +1,7 @@
  <template>
   <header class="md-elevation-3">
-    <span class="md-display-2">{{title}}</span>
+    <span>{{title}}</span>
+    <span @click="logOut()">Sair</span>
   </header>
 </template>
  
@@ -12,6 +13,13 @@ export default {
       type: String,
       required: true,
     }
+  },
+
+  methods: {
+    logOut() {
+      localStorage.removeItem('token');
+      this.$router.push('/')
+    }
   }
 }
 </script>
@@ -19,14 +27,19 @@ export default {
 <style lang="scss" scoped>
 @import '../assets/style.scss';
     header {
-        height: 20vh;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+      width: 100%;
+      padding: 1.5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
     header span {
-        color: $text-color-white;
+      color: $text-color-white;
+      font-size: 22px;
+    }
+    header span:nth-child(2) {
+      font-size: 16px;
+      cursor: pointer;
     }
 </style>
  

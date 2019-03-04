@@ -22,8 +22,10 @@ export default {
   body {
     margin: 0px;
     font-family: 'Roboto', sans-serif !important;
-    /* background-image: linear-gradient(19deg, #21d4fd, #b721ff); */
-    background-color: #e3354f;
+    background-image: linear-gradient(19deg, #21d4fd, #b721ff);
     background-repeat: repeat;
+  }
+  .md-tooltip {
+    background-color: #f3f3f3;
   }
 </style>

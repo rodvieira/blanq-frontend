@@ -14,7 +14,7 @@ const GET_CONTATO_ID = (state, obj) => {
   state.getContatoId.phones = obj.phones;
   state.getContatoId.emails = obj.emails;
   state.getContatoId.id = obj.id;
-  state.getContatoId.employers = obj.employers;
+  state.getContatoId.company = obj.employers;
 }
 
 const DEL_CONTATO = (state, obj) => {

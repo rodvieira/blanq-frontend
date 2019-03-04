@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- eslint-disable vue/no-use-v-if-with-v-for,vue/no-confusing-v-for-v-if -->
     <!-- Add empresa -->
     <section>
       <md-dialog :md-active.sync="showAddEmpresa">
@@ -18,7 +19,8 @@
             <label for="telefone">Telefone</label>
             <input v-model="objEmpresa.phone" type="text" placeholder="Ex: (00)00000-0000" maxlength="15">
             <span @click="arrayPush('telefone')">
-              <i class="fas fa-plus-circle"></i> 
+              <i class="fas fa-plus-circle"></i>
+              <md-tooltip md-direction="bottom">Adicionar</md-tooltip>
             </span>
             <span class="tags-empresa" v-for="(telefone, index) in addEmpresa.phones" :key="index">{{telefone}} <span @click="addEmpresa.phones.splice(index, 1)">x</span></span>
           </div>
@@ -27,7 +29,8 @@
             <label for="email">E-mail</label>
             <input v-model="objEmpresa.email" type="text" placeholder="Ex: johndoe@mail.com">
             <span @click="arrayPush('email')">
-              <i class="fas fa-plus-circle"></i> 
+              <i class="fas fa-plus-circle"></i>
+              <md-tooltip md-direction="bottom">Adicionar</md-tooltip>
             </span>
             <span class="tags-empresa" v-for="(email, index) in addEmpresa.emails" :key="index">{{email}} <span @click="addEmpresa.emails.splice(index, 1)">x</span></span>
           </div>
@@ -59,6 +62,7 @@
           Detalhes do Contato
           <span class="span-edit" @click="putDisable = false">
             <i class="fas fa-edit"></i>
+            <md-tooltip md-direction="bottom">Editar</md-tooltip>
           </span>
         </md-dialog-title>
         
@@ -67,12 +71,17 @@
             <label for="nome">Nome</label>
             <input type="text" v-model="getEmpresaId.name" :disabled="putDisable">
           </div>
+          <div class="form-modal">
+            <label for="dominio">Dominio</label>
+            <input v-model="getEmpresaId.dominio" type="text" placeholder="Ex: www.dominio.com">
+          </div>
 
           <div class="form-modal">
             <label for="telefone">Telefone</label>
             <input type="text" maxlength="15" @keyup.enter="arrayPutPush('phone')" v-model="putObjEmpresa.phone" :disabled="putDisable">
             <span @click="arrayPutPush('phone')">
-              <i class="fas fa-plus-circle"></i> 
+              <i class="fas fa-plus-circle"></i>
+              <md-tooltip md-direction="bottom">Adicionar</md-tooltip>
             </span>
             <span class="tags-empresa" v-for="(telefone, index) in getEmpresaId.phones" :key="telefone.id">
               {{telefone.number}} 
@@ -84,7 +93,8 @@
             <label for="email">E-mail</label>
             <input type="text" v-model="putObjEmpresa.email" :disabled="putDisable">
             <span @click="arrayPutPush('email')">
-              <i class="fas fa-plus-circle"></i> 
+              <i class="fas fa-plus-circle"></i>
+              <md-tooltip md-direction="bottom">Adicionar</md-tooltip>
             </span>
             <span class="tags-empresa" v-for="(email, index) in getEmpresaId.emails" :key="email.id" >
               {{email.address}} 
@@ -99,8 +109,12 @@
                 {{contato.name}}
               </option>
             </select>
-            <span class="tags-empresa" v-for="(contato, index) in getEmpresaId.contact" :key="index">
-              {{contato.contact.name}} 
+            <span class="tags-empresa" v-for="(contato, index) in getEmpresaId.contact" v-if="contato.contact == null" :key="index">
+              {{contato.name}}
+              <span v-if="!putDisable" @click="getEmpresaId.contact.splice(index, 1)">x</span>
+            </span>
+            <span class="tags-empresa" v-for="(contato, index) in getEmpresaId.contact" v-if="contato.contact != null" :key="index">
+              {{contato.contact.name}}
               <span v-if="!putDisable" @click="getEmpresaId.contact.splice(index, 1)">x</span>
             </span>
           </div>
@@ -137,16 +151,18 @@
               <div class="icons-list">
                 <span @click="empresaId(empresa.id)">
                   <i class="fas fa-info-circle"></i>
+                  <md-tooltip md-direction="bottom">Detalhes</md-tooltip>
                 </span>
                 <span @click="deleteEmpresa(empresa.id)">
                   <i class="fas fa-trash-alt"></i>
+                  <md-tooltip md-direction="bottom">Excluir</md-tooltip>
                 </span>
               </div>
             </li>
           </ul>
         </div>
       </div>
-    </section>   
+    </section>
   </div>
 </template>
 
@@ -175,6 +191,7 @@ export default {
       putDisable: true,
       putObjEmpresa: {
         nome: '',
+        dominio: '',
         email: [],
         phone: [],
         contact:[],
@@ -228,8 +245,6 @@ export default {
         this.getEmpresas();
         this.resetForm();
         this.resetMsg();
-        let test = ''
-        this.$store.dispatch('savEmpresa/SAV_EMPRESA', test);
       } else if (this.savEmpresa === 'error') {
         this.$swal.fire({
           type: 'error',
@@ -281,9 +296,15 @@ export default {
       let nome = this.getEmpresaId.name
       let email = this.getEmpresaId.emails;
       let telefone = this.getEmpresaId.phones;
-      let contatos = this.getEmpresaById.contact;
+      let contatos = this.getEmpresaId.contact.map((element) => {
+        return element = {
+          contact:{
+            id:element.contact.id , 
+            name:element.name === undefined ? element.contact.name : element.name
+          }
+        }
+      });
       let putId = this.getEmpresaId.id;
-      
       let putObj = {
         id: putId,
         name: nome,
@@ -292,8 +313,10 @@ export default {
         },
         emails: email,
         phones: telefone,
-        contact: contatos,
+        employees: contatos,
       }
+      
+      
       this.editarEmpresa(putObj);
       this.showDetails = false;
     },
@@ -319,7 +342,7 @@ export default {
         let telefone = resPhone;
         let contatos = resContato;
         let id = parseInt(idUser);
-        
+
         const postObj = {
           name: nome,
           domain: dominio,
@@ -376,7 +399,7 @@ export default {
           showConfirmButton: false,
         });
       } else {
-        this.getEmpresaId.contact.push(this.putObjEmpresa);
+        this.getEmpresaId.contact.push(this.putObjEmpresa);             
       }
     },
     arrayContato(){

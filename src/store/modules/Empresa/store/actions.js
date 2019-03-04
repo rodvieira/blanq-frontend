@@ -48,11 +48,8 @@ const getEmpresaById = ({ commit }, empresaId) => {
     }
   })
     .then(r => {
-      let user = r.data;      
-      console.log(user);
-      
+      let user = r.data;            
       commit('GET_EMPRESA_ID', user);
-      
     })
     .catch(() => {
       commit('GET_EMPRESA_ID', {});   

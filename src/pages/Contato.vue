@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- eslint-disable vue/no-use-v-if-with-v-for,vue/no-confusing-v-for-v-if -->
     <!-- Add contato -->
     <section>
       <md-dialog :md-active.sync="showAddContato">
@@ -14,7 +15,8 @@
             <label for="telefone">Telefone</label>
             <input v-model="objContato.phone" type="text" placeholder="Ex: (00)00000-0000" maxlength="15">
             <span @click="arrayPush('telefone')">
-              <i class="fas fa-plus-circle"></i> 
+              <i class="fas fa-plus-circle"></i>
+              <md-tooltip md-direction="bottom">Adicionar</md-tooltip>
             </span>
             <span class="tags-contato" v-for="(telefone, index) in addContato.phones" :key="index">{{telefone}} <span @click="addContato.phones.splice(index, 1)">x</span></span>
           </div>
@@ -23,7 +25,8 @@
             <label for="email">E-mail</label>
             <input v-model="objContato.email" type="text" placeholder="Ex: johndoe@mail.com">
             <span @click="arrayPush('email')">
-              <i class="fas fa-plus-circle"></i> 
+              <i class="fas fa-plus-circle"></i>
+              <md-tooltip md-direction="bottom">Adicionar</md-tooltip>
             </span>
             <span class="tags-contato" v-for="(email, index) in addContato.emails" :key="index">{{email}} <span @click="addContato.emails.splice(index, 1)">x</span></span>
           </div>
@@ -54,6 +57,7 @@
           Detalhes do Contato
           <span class="span-edit" @click="putDisable = false">
             <i class="fas fa-edit"></i>
+            <md-tooltip md-direction="bottom">Editar</md-tooltip>
           </span>
         </md-dialog-title>
         
@@ -67,7 +71,8 @@
             <label for="telefone">Telefone</label>
             <input type="text" maxlength="15" @keyup.enter="arrayPutPush('phone')" v-model="putObjContato.phone" :disabled="putDisable">
             <span @click="arrayPutPush('phone')">
-              <i class="fas fa-plus-circle"></i> 
+              <i class="fas fa-plus-circle"></i>
+              <md-tooltip md-direction="bottom">Adicionar</md-tooltip>
             </span>
             <span class="tags-contato" v-for="(telefone, index) in getContatoId.phones" :key="telefone.id">
               {{telefone.number}} 
@@ -79,7 +84,8 @@
             <label for="email">E-mail</label>
             <input type="text" v-model="putObjContato.email" :disabled="putDisable">
             <span @click="arrayPutPush('email')">
-              <i class="fas fa-plus-circle"></i> 
+              <i class="fas fa-plus-circle"></i>
+              <md-tooltip md-direction="bottom">Adicionar</md-tooltip>
             </span>
             <span class="tags-contato" v-for="(email, index) in getContatoId.emails" :key="email.id" >
               {{email.address}} 
@@ -89,14 +95,18 @@
 
           <div class="form-modal">
             <label for="Empresa"> Contatos Relacionados</label>
-            <select v-model="putObjContato.employers" @click="arrayPutEmpresa()" :disabled="putDisable">
+            <select v-model="putObjContato.company" @click="arrayPutEmpresa()" :disabled="putDisable">
               <option v-for="empresa in getEmpresa" :value="empresa" :key="empresa.id">
                 {{empresa.name}}
               </option>
             </select>
-            <span class="tags-contato" v-for="(empresa, index) in getContatoId.employers" :key="index">
+            <span class="tags-contato" v-for="(empresa, index) in getContatoId.company" v-if="empresa.company == undefined" :key="index">
+              {{empresa.employers.name}} 
+              <span  v-if="!putDisable" @click="getContatoId.company.splice(index, 1)">x</span>
+            </span>
+            <span class="tags-contato" v-for="(empresa, index) in getContatoId.company" v-if="empresa.company != null" :key="index">
               {{empresa.company.name}} 
-              <span  v-if="!putDisable" @click="getContatoId.employers.splice(index, 1)">x</span>
+              <span  v-if="!putDisable" @click="getContatoId.company.splice(index, 1)">x</span>
             </span>
           </div>
         </div>
@@ -132,16 +142,18 @@
               <div class="icons-list">
                 <span @click="contatoId(contato.id)">
                   <i class="fas fa-info-circle"></i>
+                  <md-tooltip md-direction="bottom">Detalhes</md-tooltip>
                 </span>
                 <span @click="deleteContato(contato.id)">
                   <i class="fas fa-trash-alt"></i>
+                  <md-tooltip md-direction="bottom">Excluir</md-tooltip>
                 </span>
               </div>
             </li>
           </ul>
         </div>
       </div>
-    </section>   
+    </section>
   </div>
 </template>
 
@@ -171,7 +183,7 @@ export default {
         nome: '',
         email: [],
         phone: [],
-        employers: [],
+        company: [],
       }
     };
   },
@@ -269,7 +281,15 @@ export default {
       let nome = this.getContatoId.name
       let email = this.getContatoId.emails;
       let telefone = this.getContatoId.phones;
-      let empresas = this.getContatoId.employers;
+      let empresas = this.getContatoId.company.map((element) => {
+        return element = {
+          company:{
+            id:element.company.id, 
+            name:element.name === undefined ? element.company.name : element.name
+          }
+        }
+      });
+      
       let putId = this.getContatoId.id;
       
       let putObj = {
@@ -354,7 +374,7 @@ export default {
     },
 
     arrayPutEmpresa() {
-      if (this.putObjContato.employers.length == 0) {
+      if (this.putObjContato.company.length == 0) {
         this.$swal.fire({
           title: 'Empresa inválida!',
           type: 'error',
@@ -362,7 +382,7 @@ export default {
           showConfirmButton: false,
         });
       } else {
-        this.getContatoId.employers.push(this.putObjEmpresa);
+        this.getContatoId.company.push(this.putObjContato);
       }
     },
 
