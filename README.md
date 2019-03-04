@@ -1,7 +1,6 @@
 # blanq-frontend
-# to-share
 
-> compartilhamento de arquivos
+> Desenvolvimento Front-end
 
 ## Build Setup
 
