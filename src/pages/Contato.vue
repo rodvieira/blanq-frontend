@@ -111,7 +111,7 @@
           </div>
         </div>
         <md-dialog-actions>
-          <md-button class="md-primary modal-btn" @click="showDetails = false">Close</md-button>
+          <md-button class="md-primary modal-btn" @click="closeModalPut()">Close</md-button>
           <md-button class="md-primary modal-btn" @click="editContato()"> Save </md-button>
         </md-dialog-actions>
       </md-dialog>
@@ -434,7 +434,6 @@ export default {
     contatoId(id) {      
       this.getContatoById(id);
       this.showDetails = true;
-      this.putDisable = false;
     },
 
     resetForm() {
@@ -462,7 +461,10 @@ export default {
       let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return re.test(email);
     },
-
+    closeModalPut() {
+      this.showDetails = false;
+      this.putDisable = false;
+    },
     closeModalAdd() {
       this.showAddContato = false,
       this.resetForm();

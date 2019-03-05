@@ -4,7 +4,7 @@
     <!-- Add empresa -->
     <section>
       <md-dialog :md-active.sync="showAddEmpresa">
-        <md-dialog-title>Novo empresa</md-dialog-title>
+        <md-dialog-title>Nova empresa</md-dialog-title>
         <div class="modal-conteudo">
           <div class="form-modal">
             <label for="nome">Nome</label>
@@ -59,7 +59,7 @@
     <div>
       <md-dialog :md-active.sync="showDetails">
         <md-dialog-title>
-          Detalhes do Contato
+          Detalhes da empresa
           <span class="span-edit" @click="putDisable = false">
             <i class="fas fa-edit"></i>
             <md-tooltip md-direction="bottom">Editar</md-tooltip>
