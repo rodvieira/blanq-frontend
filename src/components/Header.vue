@@ -41,5 +41,10 @@ export default {
       font-size: 16px;
       cursor: pointer;
     }
+    @media only screen and (max-width: 768px) {
+      header {
+        padding: 5.5%;
+      }
+    }
 </style>
  

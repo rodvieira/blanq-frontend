@@ -603,4 +603,17 @@ a {
   font-style: italic;
   color: #a5a5a5;
 }
+
+@media only screen and (max-width: 768px) {
+  .md-layout-item li {
+    width: 90%;
+  }
+  .modal-conteudo {
+    min-width: 250px;
+    padding: 15px;
+  }
+  .form-modal input, .form-modal select {
+    width: 85%;
+  }
+}
 </style>
